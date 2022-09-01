@@ -15,7 +15,6 @@ export class AuthService {
     const { email, password } = data;
 
     const cat = await this.catsRepository.findCatByEmail(email);
-
     if (!cat) {
       throw new UnauthorizedException('이메일과 비밀번호를 확인해주세요.');
     }
@@ -32,9 +31,7 @@ export class AuthService {
     const payload = { email, sub: cat.id };
 
     return {
-      token: this.jwtService.sign(payload, {
-        secret: process.env.JWT_SECRET_KEY,
-      }),
+      token: this.jwtService.sign(payload),
     };
   }
 }
