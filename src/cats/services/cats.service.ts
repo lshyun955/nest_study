@@ -8,7 +8,9 @@ export class CatsService {
   constructor(private readonly catsRepository: CatsRepository) {}
   async getAllCat() {
     const allCat = await this.catsRepository.findAll();
+    // console.log(allCat);
     const readOnlyCats = allCat.map((cat: Cat) => cat.readOnlyData);
+
     return readOnlyCats;
   }
 
