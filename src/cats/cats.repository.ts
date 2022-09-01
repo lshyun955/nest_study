@@ -37,4 +37,8 @@ export class CatsRepository {
     console.log(newCat);
     return newCat.readOnlyData;
   }
+
+  async findAll() {
+    return await this.catModel.find();
+  }
 }
