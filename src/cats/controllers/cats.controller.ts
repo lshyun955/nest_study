@@ -4,7 +4,7 @@ import {
   Controller,
   Get,
   Post,
-  UploadedFile,
+  UploadedFiles,
   UseFilters,
   UseGuards,
   UseInterceptors,
@@ -19,7 +19,7 @@ import { LoginRequestDto } from 'src/auth/dto/login.request.dto';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { CurrentUser } from 'src/common/decorators/user.decorator';
 import { Cat } from '../cats.schema';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('cats')
 @UseInterceptors(SuccessInterceptor)
@@ -67,10 +67,10 @@ export class CatsController {
   @ApiOperation({ summary: '고양이 이미지 업로드' })
   @Post('upload')
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(FilesInterceptor('image'))
   async uploadMediaFile(
     @CurrentUser() cat: Cat,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles() file: Array<Express.Multer.File>,
   ) {
     return await this.catsService.uploadFileToS3(cat, file);
   }

@@ -59,27 +59,32 @@ export class CatsService {
 
   async uploadFileToS3(
     cat: Cat,
-    file: Express.Multer.File,
+    file: Express.Multer.File[],
   ): Promise<{
     key: string;
     s3Object: PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>;
     contentType: string;
   }> {
     try {
-      // console.log(cat, file);
-      const key = `cats/${Date.now()}_${path.basename(
-        file.originalname,
-      )}`.replace(/ /g, '');
-      const s3Object = await this.awsS3
-        .putObject({
-          Bucket: this.S3_BUCKET_NAME,
-          Key: key,
-          Body: file.buffer,
-          ContentType: file.mimetype,
-        })
-        .promise();
-      await this.catsRepository.findByIdAndUpdateImg(cat.id, key);
-      return { key, s3Object, contentType: file.mimetype };
+      console.log(cat, file);
+      let result;
+      for (let i = 0; i < file.length; i++) {
+        const key = `cats/${Date.now()}_${path.basename(
+          file[i].originalname,
+        )}`.replace(/ /g, '');
+        const s3Object = await this.awsS3
+          .putObject({
+            Bucket: this.S3_BUCKET_NAME,
+            Key: key,
+            Body: file[i].buffer,
+            ContentType: file[i].mimetype,
+          })
+          .promise();
+        console.log('KEY:::::::::::', key);
+        result = { key, s3Object, contentType: file[i].mimetype };
+        await this.catsRepository.findByIdAndUpdateImg(cat.id, key);
+      }
+      return result;
     } catch (error) {
       throw new BadRequestException(`File upload failed : ${error}`);
     }
