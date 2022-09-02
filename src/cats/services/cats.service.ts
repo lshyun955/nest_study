@@ -28,6 +28,11 @@ export class CatsService {
     const allCat = await this.catsRepository.findAll();
     // console.log(allCat);
     const readOnlyCats = allCat.map((cat: Cat) => cat.readOnlyData);
+    for (let i = 0; i < readOnlyCats.length; i++) {
+      readOnlyCats[
+        i
+      ].imgUrl = `https://${this.S3_BUCKET_NAME}.s3.amazonaws.com/${readOnlyCats[i].imgUrl}`;
+    }
 
     return readOnlyCats;
   }

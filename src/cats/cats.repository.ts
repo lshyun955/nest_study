@@ -36,9 +36,9 @@ export class CatsRepository {
     return cat;
   }
 
-  async findByIdAndUpdateImg(catId: string, fileName: string) {
+  async findByIdAndUpdateImg(catId: string, key: string) {
     const cat = await this.catModel.findById(catId).select('-password');
-    cat.imgUrl = `http://localhost:8000/media/${fileName}`;
+    cat.imgUrl = key;
     const newCat = await cat.save();
 
     return newCat.readOnlyData;
